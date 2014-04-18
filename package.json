@@ -1,0 +1,14 @@
+{
+  "name": "menagerie",
+  "version": "0.0.0",
+  "description": "For containing wild and vicious positionables.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "cake test"
+  },
+  "author": "David Tai",
+  "license": "ISC"
+}
