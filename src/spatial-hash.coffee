@@ -53,6 +53,13 @@ class SpatialHash
           if y >= sY
             hashes.push(@hash(x, y))
     return hashes
+  filterUsingRect: (rect) ->
+    hashes = @hashRect(rect.x, rect.y, rect.width, rect.height)
+    objects = []
+    for hash in hashes
+      gets = @get(hash)
+      objects = objects.concat(gets) if gets?
+    return objects
   hash: (x, y)->
     return FLOOR(x / @pixelWidth) + FLOOR(y / @pixelHeight) * @width / @pixelWidth
   clear: ()->

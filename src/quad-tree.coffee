@@ -24,11 +24,11 @@ QuadTreeNode = class QuadTree.QuadTreeNode extends Rectangle
       @maxDepth = parseInt(options.maxDepth, 10) if options.maxDepth > 0
     @children = []
 
-  addChild: (object) ->
+  add: (object) ->
     if @isLeaf
       if @children.length < @maxChildren || @depth >= @maxDepth
         if object._quad
-          object._quad.removeChild(object)
+          object._quad.remove(object)
         object._quadIndex = @children.length
         @children.push(object)
         object._quad = @
@@ -64,19 +64,19 @@ QuadTreeNode = class QuadTree.QuadTreeNode extends Rectangle
         children.push(object)
         for child in children
           if quads[UpperLeft].containedInsideRect(child)
-            quads[UpperLeft].addChild(child)
+            quads[UpperLeft].add(child)
           else if quads[BottomLeft].containedInsideRect(child)
-            quads[BottomLeft].addChild(child)
+            quads[BottomLeft].add(child)
           else if quads[BottomRight].containedInsideRect(child)
-            quads[BottomRight].addChild(child)
+            quads[BottomRight].add(child)
           else if quads[UpperRight].containedInsideRect(child)
-            quads[UpperRight].addChild(child)
+            quads[UpperRight].add(child)
 
         @subdividingMode = false
 
         @children = quads
 
-  removeChild: (object)->
+  remove: (object)->
     if @isLeaf
       if object._quad == @
         i = object._quadIndex
@@ -87,13 +87,13 @@ QuadTreeNode = class QuadTree.QuadTreeNode extends Rectangle
         object._quadIndex = -1
     else if !@subdividingMode
       if @children[UpperLeft].containedInsideRect(object)
-        @children[UpperLeft].removeChild(object)
+        @children[UpperLeft].remove(object)
       else if @children[BottomLeft].containedInsideRect(object)
-        @children[BottomLeft].removeChild(object)
+        @children[BottomLeft].remove(object)
       else if @children[BottomRight].containedInsideRect(object)
-        @children[BottomRight].removeChild(object)
+        @children[BottomRight].remove(object)
       else if @children[UpperRight].containedInsideRect(object)
-        @children[UpperRight].removeChild(object)
+        @children[UpperRight].remove(object)
 
       #simple unsubdivide
       if @children[UpperLeft].children.length == 0 &&

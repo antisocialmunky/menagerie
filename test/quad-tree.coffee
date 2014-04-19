@@ -39,7 +39,7 @@ describe 'QuadTreeNode', ->
     quadtree.depth.should.equal parseInt(float, 10)
     quadtree.maxDepth.should.equal parseInt(float, 10)
     quadtree.maxChildren.should.equal parseInt(float, 10)
-    
+
   quadTreeWithPositionable = 0
   object = 0
   objectToAdd = 0
@@ -56,7 +56,7 @@ describe 'QuadTreeNode', ->
         y: 1
         width: 1
         height: 1
-      quadTreeWithPositionable.addChild(object)
+      quadTreeWithPositionable.add(object)
       objectToAdd =
         x: 128
         y: 128
@@ -70,14 +70,14 @@ describe 'QuadTreeNode', ->
     object.should.equal quadTreeWithPositionable.children[object._quadIndex]
 
   it 'should remove objects correctly', ->
-    quadTreeWithPositionable.removeChild(object)
+    quadTreeWithPositionable.remove(object)
 
     quadTreeWithPositionable.children.length.should.be.empty
     should.not.exist(object._quad)
     object._quadIndex.should.equal -1
 
   it 'should subdivide correctly', ->
-    quadTreeWithPositionable.addChild(objectToAdd)
+    quadTreeWithPositionable.add(objectToAdd)
     quadTreeWithPositionable.children.length.should.equal 4
     quadTreeWithPositionable.children[QuadTree.UpperLeft].children.length.should.equal 1
     quadTreeWithPositionable.children[QuadTree.UpperLeft].children[0].should.equal object
@@ -85,14 +85,14 @@ describe 'QuadTreeNode', ->
     quadTreeWithPositionable.children[QuadTree.BottomRight].children[0].should.equal objectToAdd
 
   it 'should unsubdivide correctly', ->
-    quadTreeWithPositionable.addChild(objectToAdd)
-    quadTreeWithPositionable.removeChild(object)
-    quadTreeWithPositionable.removeChild(objectToAdd)
+    quadTreeWithPositionable.add(objectToAdd)
+    quadTreeWithPositionable.remove(object)
+    quadTreeWithPositionable.remove(objectToAdd)
 
     quadTreeWithPositionable.children.length.should.equal 0
 
   it 'should filter correctly', ->
-    quadTreeWithPositionable.addChild(objectToAdd)
+    quadTreeWithPositionable.add(objectToAdd)
     rect = new Rectangle({x: 0, y: 0, width: 127, height: 127})
     results = quadTreeWithPositionable.filterUsingRect(rect)
     results.length.should.equal 1
