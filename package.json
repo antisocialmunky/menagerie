@@ -9,6 +9,17 @@
   "scripts": {
     "test": "cake test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@gh:antisocialmunky/menagerie.git"
+  },
   "author": "David Tai",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.18.2",
+    "coffee-script": "^1.7.1",
+    "source-map-support": "^0.2.5",
+    "executive": "^0.4.7"
+  }
 }
