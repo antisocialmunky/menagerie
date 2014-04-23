@@ -29,8 +29,12 @@ describe 'TileMap', ->
 
     a._elementId.should.equal 0
     a._tile.should.equal tileMap.map[101]
+    a._tile.x.should.equal 1
+    a._tile.y.should.equal 1
     b._elementId.should.equal 1
     b._tile.should.equal tileMap.map[6]
+    b._tile.x.should.equal 6
+    b._tile.y.should.equal 0
     a._tile.should.not.equal b._tile
 
     tileMap.remove(a).should.be.true

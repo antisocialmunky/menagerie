@@ -3,7 +3,11 @@ FLOOR = Math.floor
 elementId = 0
 class Tile
   elements: null
-  constructor: ()->
+  x: 0
+  y: 0
+  constructor: (x, y)->
+    @x = x || @x
+    @y = y || @y
     @elements = {}
   add: (element)->
     id = element._elementId
@@ -39,7 +43,7 @@ class TileMap
         hash = @hash(position)
         tile = @map[hash]
         if !tile?
-          tile = @map[hash] = new Tile
+          tile = @map[hash] = new @TileClass(FLOOR(position.x / @pixelWidth), FLOOR(position.y / @pixelHeight))
         tile.add(element)
         return true
     return false
