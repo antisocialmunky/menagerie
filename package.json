@@ -1,6 +1,6 @@
 {
   "name": "menagerie",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "For containing wild and vicious positionables.",
   "main": "index.js",
   "directories": {
