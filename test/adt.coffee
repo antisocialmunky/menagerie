@@ -1,4 +1,6 @@
-Rectangle = require '../lib/rectangle'
+ADT = require '../lib/adt'
+Rectangle = ADT.Rectangle
+Bounds = ADT.Bounds
 
 describe 'Rectangle', ->
   it 'should default construct correctly', ->
@@ -21,3 +23,15 @@ describe 'Rectangle', ->
     rectangle.y.should.equal y
     rectangle.width.should.equal width
     rectangle.height.should.equal height
+    
+describe 'Bounds', ->
+  it 'should construct circles correctly', ->
+    bounds = new Bounds(radius: 10)
+    bounds.radius.should.equal 10
+    bounds.width.should.equal 20
+    bounds.height.should.equal 20
+  it 'should construct rectangles correctly', ->
+    bounds = new Bounds(width: 20, height: 20)
+    bounds.radius.should.equal 10
+    bounds.width.should.equal 20
+    bounds.height.should.equal 20

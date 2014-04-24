@@ -1,4 +1,5 @@
-Rectangle = require './rectangle'
+ADT = require './adt'
+Rectangle = ADT.Rectangle
 
 QuadTree = {}
 
@@ -104,8 +105,9 @@ QuadTreeNode = class QuadTree.QuadTreeNode extends Rectangle
         @isLeaf = true
 
   containedInsideRect: (object)->
-    x = object.x
-    y = object.y
+    position = object.position
+    x = position.x
+    y = position.y
     myX = @x
     myY = @y
     return x >= myX && x < @width + myX && y >= myY && y < @height + myY

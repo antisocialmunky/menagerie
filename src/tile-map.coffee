@@ -1,31 +1,31 @@
 FLOOR = Math.floor
 
-elementId = 0
+objectId = 0
 class Tile
-  elements: null
+  objects: null
   x: 0
   y: 0
   constructor: (x, y)->
     @x = x || @x
     @y = y || @y
-    @elements = {}
-  add: (element)->
-    id = element._elementId
+    @objects = {}
+  add: (object)->
+    id = object._objectId
     if !id?
-      id = element._elementId = elementId++
-    else if element._tile?
-      element._tile.remove(element)
-    @elements[id] = element
-    element._tile = @
+      id = object._objectId = objectId++
+    else if object._tile?
+      object._tile.remove(object)
+    @objects[id] = object
+    object._tile = @
   filter: (filter)->
-    elements = []
-    for id, element of @elements
-      elements.push(element) if filter(element)
-    return elements
-  remove: (element)->
-    if element._elementId? && element._tile == @
-      delete @elements[element._elementId]
-      delete element._tile
+    objects = []
+    for id, object of @objects
+      objects.push(object) if filter(object)
+    return objects
+  remove: (object)->
+    if object._objectId? && object._tile == @
+      delete @objects[object._objectId]
+      delete object._tile
 
 class TileMap
   pixelWidth: 0
@@ -46,15 +46,15 @@ class TileMap
     @totalPixelHeight = @pixelHeight * @tileHeight
 
     @map = {}
-  add: (element)->
-    position = element.position
+  add: (object)->
+    position = object.position
     if position?
       if @bounds(position.x, position.y)
         hash = @hash(position.x, position.y)
         tile = @map[hash]
         if !tile?
           tile = @map[hash] = new @TileClass(FLOOR(position.x / @pixelWidth), FLOOR(position.y / @pixelHeight))
-        tile.add(element)
+        tile.add(object)
         return true
     return false
   get: (x, y)->
@@ -66,9 +66,9 @@ class TileMap
       if tile?
         return tile.filter(filter)
     return []
-  remove: (element)->
-    if element._tile?
-      element._tile.remove(element)
+  remove: (object)->
+    if object._tile?
+      object._tile.remove(object)
       return true
     return false
   bounds: (x, y)->

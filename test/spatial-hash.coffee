@@ -1,6 +1,7 @@
 should = require('chai').should()
 SpatialHash = require '../lib/spatial-hash'
-Rectangle = require '../lib/rectangle'
+ADT = require '../lib/adt'
+Rectangle = ADT.Rectangle
 
 describe 'SpatialHash', ->
   spatialHash = new SpatialHash(
@@ -9,19 +10,24 @@ describe 'SpatialHash', ->
     pixelWidth: 10
     pixelHeight: 10)
   object = 
-    x: 50
-    y: 50
-  object2 = 
-    x: 80
-    y: 80
+    position:
+      x: 50
+      y: 50
+  object2 =
+    position: 
+      x: 80
+      y: 80
   object3 = 
-    x: 0
-    y: 0
-  rect = new Rectangle(
-    x: 50
-    y: 50
-    width: 20
-    height: 20)
+    position:
+      x: 0
+      y: 0
+  rect = 
+    position:
+      x: 50
+      y: 50
+    bounds:
+      width: 20
+      height: 20
   it 'should construct correctly', ->
     spatialHash.width.should.equal 100
     spatialHash.height.should.equal 100

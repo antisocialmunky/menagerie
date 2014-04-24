@@ -1,5 +1,7 @@
 QuadTree = require '../lib/quad-tree'
-Rectangle = require '../lib/rectangle'
+ADT = require '../lib/adt'
+Rectangle = ADT.Rectangle
+
 should = require('chai').should()
 
 float = Math.random() * 100
@@ -52,14 +54,16 @@ describe 'QuadTreeNode', ->
         maxDepth: 2,
         maxChildren: 1)
       object =
-        x: 1
-        y: 1
+        position:
+          x: 1
+          y: 1
         width: 1
         height: 1
       quadTreeWithPositionable.add(object)
       objectToAdd =
-        x: 128
-        y: 128
+        position:
+          x: 128
+          y: 128
         width: 1
         height: 1
 

@@ -1,5 +1,5 @@
 module.exports = {
-  Rectangle: require('./lib/rectangle'),
+  ADT: require('./lib/adt'),
   SpatialHash: require('./lib/spatial-hash'),
   QuadTree: require('./lib/quad-tree'),
   Graph: require('./lib/graph'),

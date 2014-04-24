@@ -17,26 +17,30 @@ class SpatialHash
       @maxHash = @width * @height / @pixelWidth / @pixelHeight
     @lookup = {}
   add: (object)->
-    if object.x? && object.y?
-      if object.width? && object.height?
-        @addRect(object)
+    position = object.position
+    bounds = object.bounds
+    if position? && position.x? && position.y?
+      if bounds? && bounds.width? && bounds.height?
+        @addBounds(object)
       else
-        hash = @hash(object.x, object.y)
+        hash = @hash(position.x, position.y)
         @addByHash(object, hash)
   addByHash: (object, hash)->
       if !(bucket = @lookup[hash])
         bucket = @lookup[hash] = []
       bucket.push(object)
-  addRect: (object)->
-    maxX = object.x+object.width
-    maxY = object.y+object.height
+  addBounds: (object)->
+    position = object.position
+    bounds = object.bounds
+    maxX = position.x+bounds.width
+    maxY = position.y+bounds.height
     pixelWidth = @pixelWidth
     pixelHeight = @pixelHeight
 
-    for x in [object.x..CEIL(maxX/pixelWidth)*pixelWidth] by pixelWidth
-      if x >= object.x
-        for y in [object.y..CEIL(maxY/pixelHeight)*pixelHeight] by pixelHeight
-          if y >= object.y
+    for x in [position.x..CEIL(maxX/pixelWidth)*pixelWidth] by pixelWidth
+      if x >= position.x
+        for y in [position.y..CEIL(maxY/pixelHeight)*pixelHeight] by pixelHeight
+          if y >= position.y
             hash = @hash(x, y)
             @addByHash(object, hash)
   get: (hash)->
