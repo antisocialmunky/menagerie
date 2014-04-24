@@ -3,5 +3,6 @@ module.exports = {
   SpatialHash: require('./lib/spatial-hash'),
   QuadTree: require('./lib/quad-tree'),
   Graph: require('./lib/graph'),
-  TileMap: require('./lib/tile-map')
+  TileMap: require('./lib/tile-map'),
+  Collider: require('./lib/collider'),
 };
