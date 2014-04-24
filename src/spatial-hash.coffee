@@ -39,9 +39,9 @@ class SpatialHash
     pixelWidth = @pixelWidth
     pixelHeight = @pixelHeight
 
-    for x in [position.x..FLOOR(maxX/pixelWidth)*pixelWidth] by pixelWidth
+    for x in [position.x..CEIL(maxX/pixelWidth)*pixelWidth] by pixelWidth
       if x >= position.x
-        for y in [position.y..FLOOR(maxY/pixelHeight)*pixelHeight] by pixelHeight
+        for y in [position.y..CEIL(maxY/pixelHeight)*pixelHeight] by pixelHeight
           if y >= position.y
             hash = @hash(x, y)
             @addByHash(object, hash, layer)
