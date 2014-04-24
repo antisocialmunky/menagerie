@@ -1,14 +1,20 @@
+SpatialHash = require './spatial-hash'
+
 class Collidable
   bounds: null
   layer: 'default'
   layersToCollide: []
   constructor: (options)->
-    @bounds = options.bounds
+    @bounds = options.bounds || new Bounds
     @layer = options.layer || @layer
     @layersToCollide = options.layersToCollide || []
 
 class Collider
   objects: null
+  pixelWidth: 128
+  pixelHeight: 128
+  width: 1280
+  height: 768
   constructor: ()->
     @objects = {}
   add: (object)->
@@ -28,8 +34,11 @@ class Collider
           layer.splice(i, 1)
   collide: ()->
     collisions = []
+    spatialHash = new SpatialHash(@)
+
     for layer, objects of @objects
       for object1 in objects
+        spatialHash.add(object1, layer)
         layersToCollide = object1.layersToCollide
         for layerToCollide in layersToCollide
           objectsToCollide = @objects[layerToCollide]

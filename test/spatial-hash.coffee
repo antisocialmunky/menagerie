@@ -35,8 +35,8 @@ describe 'SpatialHash', ->
     spatialHash.pixelHeight.should.equal 10
   it 'should add/get/clear an object',->
     spatialHash.add(object)
-    spatialHash.get(spatialHash.hash(55, 55))[0].should.equal object
-    spatialHash.get(spatialHash.hash(50, 50))[0].should.equal object
+    spatialHash.get(spatialHash.hash(55, 55))['default'][0].should.equal object
+    spatialHash.get(spatialHash.hash(50, 50))['default'][0].should.equal object
     should.not.exist(spatialHash.get(spatialHash.hash(60, 60)))
 
     spatialHash.clear()
@@ -46,12 +46,12 @@ describe 'SpatialHash', ->
 
   it 'should add/get/clear a rect object',->
     spatialHash.add(rect)
-    spatialHash.get(spatialHash.hash(75, 75))[0].should.equal rect
-    spatialHash.get(spatialHash.hash(70, 70))[0].should.equal rect
-    spatialHash.get(spatialHash.hash(65, 65))[0].should.equal rect
-    spatialHash.get(spatialHash.hash(60, 60))[0].should.equal rect
-    spatialHash.get(spatialHash.hash(55, 55))[0].should.equal rect
-    spatialHash.get(spatialHash.hash(50, 50))[0].should.equal rect
+    spatialHash.get(spatialHash.hash(75, 75))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(70, 70))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(65, 65))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(60, 60))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(55, 55))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(50, 50))['default'][0].should.equal rect
     should.not.exist(spatialHash.get(spatialHash.hash(80, 80)))
 
     spatialHash.clear()
@@ -75,7 +75,7 @@ describe 'SpatialHash', ->
       height: 50)
 
     objects.length.should.equal 2
-    objects[0].should.equal object
-    objects[1].should.equal object2
+    objects[0]['default'][0].should.equal object
+    objects[1]['default'][0].should.equal object2
 
     spatialHash.clear()

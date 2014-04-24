@@ -16,20 +16,22 @@ class SpatialHash
       @pixelHeight = options.pixelHeight if options.pixelHeight
       @maxHash = @width * @height / @pixelWidth / @pixelHeight
     @lookup = {}
-  add: (object)->
+  add: (object, layer = 'default')->
     position = object.position
     bounds = object.bounds
-    if position? && position.x? && position.y?
-      if bounds? && bounds.width? && bounds.height?
-        @addBounds(object)
+    if position?
+      if bounds?
+        @addBounds(object, layer)
       else
         hash = @hash(position.x, position.y)
-        @addByHash(object, hash)
-  addByHash: (object, hash)->
-      if !(bucket = @lookup[hash])
-        bucket = @lookup[hash] = []
-      bucket.push(object)
-  addBounds: (object)->
+        @addByHash(object, hash, layer)
+  addByHash: (object, hash, layer)->
+    if !(buckets = @lookup[hash])
+      buckets = @lookup[hash] = {}
+    if !(bucket = buckets[layer])
+      bucket = buckets[layer] = []
+    bucket.push(object)
+  addBounds: (object, layer)->
     position = object.position
     bounds = object.bounds
     maxX = position.x+bounds.width
@@ -42,7 +44,7 @@ class SpatialHash
         for y in [position.y..CEIL(maxY/pixelHeight)*pixelHeight] by pixelHeight
           if y >= position.y
             hash = @hash(x, y)
-            @addByHash(object, hash)
+            @addByHash(object, hash, layer)
   get: (hash)->
     return @lookup[hash]
   hashRect: (sX, sY, width, height)->
