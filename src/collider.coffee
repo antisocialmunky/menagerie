@@ -34,18 +34,21 @@ class Collider
           layer.splice(i, 1)
   collide: ()->
     collisions = []
-    spatialHash = new SpatialHash(@)
+    partition = new SpatialHash(@)
 
     for layer, objects of @objects
       for object1 in objects
-        spatialHash.add(object1, layer)
-        layersToCollide = object1.layersToCollide
-        for layerToCollide in layersToCollide
-          objectsToCollide = @objects[layerToCollide]
-          if objectsToCollide?
-            for object2 in objectsToCollide
-              if object1 != object2 && @collideObjects(object1, object2)
-                collisions.push(object1: object1, object2: object2)
+        partition.add(object1, layer)
+
+    for hash, chunk of partition.lookup
+      for layer, bucket1 of chunk
+        for object1 in bucket1
+          for layerToCollide in object1.layersToCollide
+            bucket2 = chunk[layerToCollide]
+            if bucket2
+              for object2 in bucket2
+                if object1 != object2 && @collideObjects(object1, object2)
+                  collisions.push(object1: object1, object2: object2)
     return collisions
   collideObjects: (object1, object2)->
 
