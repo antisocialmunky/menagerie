@@ -78,20 +78,25 @@ describe 'TileMap', ->
     tileMap.remove(a).should.be.false
     tileMap.remove(b).should.be.false
 
-  it 'should getTilePositionInPixels correctly', ->
-    [x, y] = tileMap.getTilePositionInPixels(7, 2)
+  it 'should getTilePosition correctly', ->
+    [x, y] = tileMap.getTilePosition(7, 2)
     x.should.equal 5
     y.should.equal 5
 
-    [x, y] = tileMap.getTilePositionInPixels(72, 56)
+    [x, y] = tileMap.getTilePosition(72, 56)
     x.should.equal 75
     y.should.equal 55
 
-  it 'should getTilePosition correctly', ->
-    [x, y] = tileMap.getTilePosition(7, 2)
+  it 'should getTileCoords correctly', ->
+    [x, y] = tileMap.getTileCoords(7, 2)
     x.should.equal 0
     y.should.equal 0
 
-    [x, y] = tileMap.getTilePosition(72, 56)
+    [x, y] = tileMap.getTileCoords(72, 56)
     x.should.equal 7
     y.should.equal 5
+
+  it 'should getPositionFromTileCoords correctly', ->
+    [x, y] = tileMap.getPositionFromTileCoords(7, 2)
+    x.should.equal 75
+    y.should.equal 25
