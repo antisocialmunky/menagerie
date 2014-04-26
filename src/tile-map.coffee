@@ -72,7 +72,9 @@ class TileMap
       return true
     return false
   getTilePosition: (x, y)->
-    return [FLOOR(x / @pixelWidth) + @pixelWidth / 2, FLOOR(y / @pixelHeight) + @pixelHeight / 2]
+    return [FLOOR(x / @pixelWidth), FLOOR(y / @pixelHeight)]
+  getTilePositionInPixels: (x, y)->
+    return [(FLOOR(x / @pixelWidth) + 0.5) * @pixelWidth, (FLOOR(y / @pixelHeight) + 0.5) * @pixelHeight]
   bounds: (x, y)->
     return x >= 0 && x < @totalPixelWidth && y >= 0 && y < @totalPixelHeight
   hash: (x, y)->
