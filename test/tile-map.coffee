@@ -14,6 +14,20 @@ describe 'TileMap', ->
     tileMap.tileWidth.should.equal 100
     tileMap.tileHeight.should.equal 100
 
+    for hash in [0..tileMap.hashMax]
+      tile = tileMap.map[hash]
+      should.exist tile
+      if tile.top?
+        tile.top.bottom.should.equal tile
+      if tile.left?
+        tile.left.right.should.equal tile
+      if tile.bottom?
+        tile.bottom.top.should.equal tile
+      if tile.right?
+        tile.right.left.should.equal tile
+    should.not.exist tileMap.map[-1]
+    should.not.exist tileMap.map[tileMap.hashMax + 1]
+
   it 'should add/get/filter correctly', ->
     a =
       position:
@@ -29,12 +43,16 @@ describe 'TileMap', ->
 
     a._objectId.should.equal 0
     a._tile.should.equal tileMap.get(10, 10)
-    a._tile.x.should.equal 1
-    a._tile.y.should.equal 1
+    a._tile.position.x.should.equal 10
+    a._tile.position.y.should.equal 10
+    a._tile.center.x.should.equal 15
+    a._tile.center.y.should.equal 15
     b._objectId.should.equal 1
     b._tile.should.equal tileMap.get(61, 9)
-    b._tile.x.should.equal 6
-    b._tile.y.should.equal 0
+    b._tile.position.x.should.equal 60
+    b._tile.position.y.should.equal 0
+    b._tile.center.x.should.equal 65
+    b._tile.center.y.should.equal 5
     a._tile.should.not.equal b._tile
 
     tileMap.filter(
@@ -77,26 +95,3 @@ describe 'TileMap', ->
     # should not break
     tileMap.remove(a).should.be.false
     tileMap.remove(b).should.be.false
-
-  it 'should getTilePosition correctly', ->
-    [x, y] = tileMap.getTilePosition(7, 2)
-    x.should.equal 5
-    y.should.equal 5
-
-    [x, y] = tileMap.getTilePosition(72, 56)
-    x.should.equal 75
-    y.should.equal 55
-
-  it 'should getTileCoords correctly', ->
-    [x, y] = tileMap.getTileCoords(7, 2)
-    x.should.equal 0
-    y.should.equal 0
-
-    [x, y] = tileMap.getTileCoords(72, 56)
-    x.should.equal 7
-    y.should.equal 5
-
-  it 'should getPositionFromTileCoords correctly', ->
-    [x, y] = tileMap.getPositionFromTileCoords(7, 2)
-    x.should.equal 75
-    y.should.equal 25

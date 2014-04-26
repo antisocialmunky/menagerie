@@ -1,13 +1,23 @@
+Vector2D = require './vector2d'
+
 FLOOR = Math.floor
 
 objectId = 0
 class Tile
   objects: null
-  x: 0
-  y: 0
-  constructor: (x, y)->
-    @x = x || @x
-    @y = y || @y
+  position: new Vector2D
+  center: null
+  map: null
+  top: null
+  down: null
+  left: null
+  right: null
+  constructor: (options)->
+    @position = options.position || @position
+    @map = options.map
+    @center = new Vector2D
+      x: @position.x + @map.pixelWidth / 2
+      y: @position.y + @map.pixelHeight / 2
     @objects = {}
   add: (object)->
     id = object._objectId
@@ -35,6 +45,7 @@ class TileMap
   totalPixelWidth: 0
   totalPixelHeight: 0
   map: null
+  hashMax: 0
   TileClass: Tile
   constructor: (options)->
     @pixelWidth = options.pixelWidth || @pixelWidth
@@ -46,43 +57,59 @@ class TileMap
     @totalPixelHeight = @pixelHeight * @tileHeight
 
     @map = {}
+    @hashMax = @tileHeight * @tileWidth - 1
+    for x in [0...@totalPixelWidth-1] by @pixelWidth
+      for y in [0...@totalPixelHeight-1] by @pixelHeight
+        hash = @hash(x, y)
+        tile = @map[hash] = new @TileClass
+          position: new Vector2D
+            x: x 
+            y: y 
+          map: @
+        left = @get(x - 1, y)
+        top = @get(x, y - 1)
+        if left? 
+          tile.left = left
+          left.right = tile
+        if top?
+          tile.top = top
+          top.bottom = tile
+
   add: (object)->
     position = object.position
     if position?
       if @bounds(position.x, position.y)
         hash = @hash(position.x, position.y)
         tile = @map[hash]
-        if !tile?
-          tile = @map[hash] = new @TileClass(FLOOR(position.x / @pixelWidth), FLOOR(position.y / @pixelHeight))
         tile.add(object)
         return true
     return false
+
   get: (x, y)->
     if @bounds(x, y)
       return @map[@hash(x, y)]
+
   filter: (filter, x, y)->
     if @bounds(x, y)
       tile = @map[@hash(x, y)]
-      if tile?
-        return tile.filter(filter)
+      return tile.filter(filter)
     return []
+
   remove: (object)->
     if object._tile?
       object._tile.remove(object)
       return true
     return false
-  getPositionFromTileCoords: (x, y)->
-    return [(x + 0.5) * @pixelWidth, (y + 0.5) * @pixelHeight]
-  getTileCoords: (x, y)->
-    return [FLOOR(x / @pixelWidth), FLOOR(y / @pixelHeight)]
-  getTilePosition: (x, y)->
-    return [(FLOOR(x / @pixelWidth) + 0.5) * @pixelWidth, (FLOOR(y / @pixelHeight) + 0.5) * @pixelHeight]
+
   bounds: (x, y)->
     return x >= 0 && x < @totalPixelWidth && y >= 0 && y < @totalPixelHeight
+
   hash: (x, y)->
     tileX = FLOOR(x / @pixelWidth)
     tileY = FLOOR(y / @pixelHeight)
-    return tileY * @tileWidth + tileX
-    #if position?
+    hash = tileY * @tileWidth + tileX
+    if hash < 0 || hash > @hashMax
+      return false 
+    return hash
 
 module.exports = TileMap
