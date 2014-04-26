@@ -1,5 +1,6 @@
 FLOOR = Math.floor
 CEIL = Math.ceil
+MAX = Math.max
 
 class SpatialHash
   lookup: null
@@ -7,14 +8,12 @@ class SpatialHash
   height: 0
   pixelWidth: 0
   pixelHeight: 0
-  maxHash: 0
   constructor: (options)->
     if options
       @width = options.width if options.width
       @height = options.height if options.height
       @pixelWidth = options.pixelWidth if options.pixelWidth
       @pixelHeight = options.pixelHeight if options.pixelHeight
-      @maxHash = @width * @height / @pixelWidth / @pixelHeight
     @lookup = {}
   add: (object, layer = 'default')->
     position = object.position
@@ -34,15 +33,24 @@ class SpatialHash
   addBounds: (object, layer)->
     position = object.position
     bounds = object.bounds
-    maxX = position.x+bounds.width
-    maxY = position.y+bounds.height
     pixelWidth = @pixelWidth
     pixelHeight = @pixelHeight
 
-    for x in [position.x..CEIL(maxX/pixelWidth)*pixelWidth] by pixelWidth
-      if x >= position.x
-        for y in [position.y..CEIL(maxY/pixelHeight)*pixelHeight] by pixelHeight
-          if y >= position.y
+    minX = position.x - bounds.width / 2
+    minY = position.y - bounds.height / 2
+    maxX = position.x + bounds.width / 2 
+    maxY = position.y + bounds.height / 2
+    minX = FLOOR(minX/pixelWidth)*pixelWidth + 1 if minX % pixelWidth != 0
+    minX = MAX(minX, 0)
+    maxX = CEIL(maxX/pixelWidth)*pixelWidth - 1  if maxX % pixelHeight != 0
+    minY = FLOOR(minY/pixelHeight)*pixelHeight + 1 if minY % pixelHeight != 0
+    minY = MAX(minX, 0)
+    maxY = CEIL(maxY/pixelHeight)*pixelHeight - 1  if maxY % pixelHeight != 0
+
+    for x in [minX..maxX] by pixelWidth
+      if x >= minX
+        for y in [minY..maxY] by pixelHeight
+          if y >= minY
             hash = @hash(x, y)
             @addByHash(object, hash, layer)
   get: (hash)->

@@ -21,6 +21,9 @@ describe 'SpatialHash', ->
     position:
       x: 0
       y: 0
+    bounds:
+      width: 1
+      height: 20
   rect = 
     position:
       x: 50
@@ -46,17 +49,17 @@ describe 'SpatialHash', ->
 
   it 'should add/get/clear a rect object',->
     spatialHash.add(rect)
-    spatialHash.get(spatialHash.hash(75, 75))['default'][0].should.equal rect
-    spatialHash.get(spatialHash.hash(70, 70))['default'][0].should.equal rect
     spatialHash.get(spatialHash.hash(65, 65))['default'][0].should.equal rect
     spatialHash.get(spatialHash.hash(60, 60))['default'][0].should.equal rect
     spatialHash.get(spatialHash.hash(55, 55))['default'][0].should.equal rect
     spatialHash.get(spatialHash.hash(50, 50))['default'][0].should.equal rect
-    should.not.exist(spatialHash.get(spatialHash.hash(80, 80)))
+    spatialHash.get(spatialHash.hash(45, 45))['default'][0].should.equal rect
+    spatialHash.get(spatialHash.hash(40, 40))['default'][0].should.equal rect
+    should.not.exist(spatialHash.get(spatialHash.hash(35, 35)))
+    should.not.exist(spatialHash.get(spatialHash.hash(70, 70)))
 
     spatialHash.clear()
     
-    should.not.exist(spatialHash.get(spatialHash.hash(75, 75)))
     should.not.exist(spatialHash.get(spatialHash.hash(70, 70)))
     should.not.exist(spatialHash.get(spatialHash.hash(65, 65)))
     should.not.exist(spatialHash.get(spatialHash.hash(60, 60)))
