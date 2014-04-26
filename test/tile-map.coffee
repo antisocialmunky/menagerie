@@ -77,3 +77,8 @@ describe 'TileMap', ->
     # should not break
     tileMap.remove(a).should.be.false
     tileMap.remove(b).should.be.false
+
+  it 'should getTilePosition correctly', ->
+    [x, y] = tileMap.getTilePosition(7, 2)
+    x.should.equal 5
+    y.should.equal 5

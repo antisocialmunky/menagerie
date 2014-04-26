@@ -71,6 +71,8 @@ class TileMap
       object._tile.remove(object)
       return true
     return false
+  getTilePosition: (x, y)->
+    return [FLOOR(x / @pixelWidth) + @pixelWidth / 2, FLOOR(y / @pixelHeight) + @pixelHeight / 2]
   bounds: (x, y)->
     return x >= 0 && x < @totalPixelWidth && y >= 0 && y < @totalPixelHeight
   hash: (x, y)->
