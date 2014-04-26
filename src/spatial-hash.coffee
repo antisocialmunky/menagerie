@@ -44,7 +44,7 @@ class SpatialHash
     minX = MAX(minX, 0)
     maxX = CEIL(maxX/pixelWidth)*pixelWidth - 1  if maxX % pixelHeight != 0
     minY = FLOOR(minY/pixelHeight)*pixelHeight + 1 if minY % pixelHeight != 0
-    minY = MAX(minX, 0)
+    minY = MAX(minY, 0)
     maxY = CEIL(maxY/pixelHeight)*pixelHeight - 1  if maxY % pixelHeight != 0
 
     for x in [minX..maxX] by pixelWidth
