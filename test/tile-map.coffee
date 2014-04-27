@@ -103,8 +103,14 @@ describe 'TileMap', ->
     waypoints = TileMap.AStar(start, end, ()->return 1)
     waypoints.length.should.equal 20
 
+    waypoints[0].should.equal start
+    waypoints[waypoints.length - 1].should.equal end
+
     start = tileMap.get(0, 0)
     end = tileMap.get(100, 200)
 
     waypoints = TileMap.AStar(start, end, ()->return 1)
     waypoints.length.should.equal 30
+
+    waypoints[0].should.equal start
+    waypoints[waypoints.length - 1].should.equal end
