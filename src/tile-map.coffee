@@ -1,9 +1,12 @@
 Vector2D = require './vector2d'
+PriorityQueue = require 'binaryheap'
 
 FLOOR = Math.floor
+SQRT2 = Math.sqrt(2)
 
 objectId = 0
 class Tile
+  id: 0
   objects: null
   position: new Vector2D
   center: null
@@ -13,6 +16,7 @@ class Tile
   left: null
   right: null
   constructor: (options)->
+    @id = options.id
     @position = options.position || @position
     @map = options.map
     @center = new Vector2D
@@ -62,6 +66,7 @@ class TileMap
       for y in [0...@totalPixelHeight-1] by @pixelHeight
         hash = @hash(x, y)
         tile = @map[hash] = new @TileClass
+          id: hash
           position: new Vector2D
             x: x 
             y: y 
@@ -111,5 +116,68 @@ class TileMap
     if hash < 0 || hash > @hashMax
       return false 
     return hash
+
+TileMap.AStar = (startTile, endTile, cost)-> 
+  statuses = {}
+
+  lastTile = null
+
+  startStatus = statuses[startTile.id] = 
+    tile: startTile
+    parent: lastTile
+    closed: false
+    cost: 0
+    heuristicCost: 0
+    predictedCost: 0
+    opened: true
+
+  openList = new PriorityQueue(true)
+  openList.insert(startStatus, 0)
+
+  while openList.length > 0
+    status = openList.pop()
+    status.closed = true
+    tile = status.tile
+
+    if tile == endTile
+      waypoints = []
+      while tile != startTile
+        waypoints.push(tile)
+        tile = statuses[tile.id].parent
+      return waypoints
+
+    neighbors = []
+    neighbors.push(tile.top) if tile.top?
+    neighbors.push(tile.left) if tile.left?
+    neighbors.push(tile.bottom) if tile.bottom?
+    neighbors.push(tile.right) if tile.right?
+
+    for neighbor in neighbors
+      neighborStatus = statuses[neighbor.id]
+      if !neighborStatus? 
+        neighborStatus = statuses[neighbor.id] = 
+          tile: neighbor
+          parent: tile
+          opened: false
+      if !neighborStatus.closed
+        coef = 1
+        moveCost = coef * cost(neighbor)
+
+        newCost = status.cost + moveCost
+
+        if !neighborStatus.opened || newCost < neighborStatus.cost
+          heuristicCost = neighbor.position.sub(neighbor.position).length()
+          predictedCost = newCost + heuristicCost
+
+          neighborStatus.cost = newCost
+          neighborStatus.heuristicCost = heuristicCost
+          neighborStatus.predictedCost = predictedCost
+
+          if !neighborStatus.opened
+            neighborStatus.opened = true
+          else
+            openList.remove(neighborStatus)
+          openList.insert(neighborStatus, predictedCost)
+  return []
 
 module.exports = TileMap

@@ -95,3 +95,16 @@ describe 'TileMap', ->
     # should not break
     tileMap.remove(a).should.be.false
     tileMap.remove(b).should.be.false
+
+  it 'should be able to plot a path using A*', ->
+    start = tileMap.get(0, 0)
+    end = tileMap.get(100, 100)
+
+    waypoints = TileMap.AStar(start, end, ()->return 1)
+    waypoints.length.should.equal 20
+
+    start = tileMap.get(0, 0)
+    end = tileMap.get(100, 200)
+
+    waypoints = TileMap.AStar(start, end, ()->return 1)
+    waypoints.length.should.equal 30
