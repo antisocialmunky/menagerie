@@ -103,8 +103,8 @@ describe 'TileMap', ->
     waypoints = TileMap.AStar(start, end, ()->return 1)
     waypoints.length.should.equal 20
 
-    waypoints[0].should.equal start
-    waypoints[waypoints.length - 1].should.equal end
+    waypoints[0].id.should.not.equal start.id
+    waypoints[waypoints.length - 1].id.should.equal end.id
 
     start = tileMap.get(0, 0)
     end = tileMap.get(100, 200)
@@ -112,5 +112,5 @@ describe 'TileMap', ->
     waypoints = TileMap.AStar(start, end, ()->return 1)
     waypoints.length.should.equal 30
 
-    waypoints[0].should.equal start
-    waypoints[waypoints.length - 1].should.equal end
+    waypoints[0].id.should.not.equal start.id
+    waypoints[waypoints.length - 1].id.should.equal end.id

@@ -144,7 +144,7 @@ TileMap.AStar = (startTile, endTile, cost)->
       while tile != startTile
         waypoints.push(tile)
         tile = statuses[tile.id].parent
-      return waypoints.reverse
+      return waypoints.reverse()
 
     neighbors = []
     neighbors.push(tile.top) if tile.top?
