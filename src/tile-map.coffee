@@ -76,9 +76,9 @@ class TileMap
             y: y 
           map: @
         left = @get(x - 1, y)
-        topLeft = @get(x-1, y - 1)
+        topLeft = @get(x - 1, y - 1)
         top = @get(x, y - 1)
-        topRight = @get(x+1, y - 1)
+        bottomLeft = @get(x - 1, y + 1)
         if left? 
           tile.left = left
           left.right = tile
@@ -88,9 +88,9 @@ class TileMap
         if top?
           tile.top = top
           top.bottom = tile
-        if topRight?
-          tile.topRight = topRight
-          topRight.bottomLeft = tile
+        if bottomLeft?
+          tile.bottomLeft = bottomLeft
+          bottomLeft.topRight = tile
 
   add: (object)->
     position = object.position
