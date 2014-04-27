@@ -32,14 +32,18 @@ class Collider
         i = layer.indexOf(object)
         if i >= 0
           layer.splice(i, 1)
-  collide: ()->
-    collisions = []
+  populatePartition: ()->
     partition = new SpatialHash(@)
 
     for layer, objects of @objects
       for object1 in objects
         partition.add(object1, layer)
+    return partition
 
+  collide: ()->
+    collisions = []
+    partition = @populatePartition()
+    
     for hash, chunk of partition.lookup
       for layer, bucket1 of chunk
         for object1 in bucket1

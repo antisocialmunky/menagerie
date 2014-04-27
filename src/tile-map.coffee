@@ -12,9 +12,13 @@ class Tile
   center: null
   map: null
   top: null
-  down: null
+  topLeft: null
   left: null
+  bottomLeft: null
+  bottom: null
+  bottomRight: null
   right: null
+  topRight: null
   constructor: (options)->
     @id = options.id
     @position = options.position || @position
@@ -72,13 +76,21 @@ class TileMap
             y: y 
           map: @
         left = @get(x - 1, y)
+        topLeft = @get(x-1, y - 1)
         top = @get(x, y - 1)
+        topRight = @get(x+1, y - 1)
         if left? 
           tile.left = left
           left.right = tile
+        if topLeft?
+          tile.topLeft = topLeft
+          topLeft.bottomRight = tile
         if top?
           tile.top = top
           top.bottom = tile
+        if topRight?
+          tile.topRight = topRight
+          topRight.bottomLeft = tile
 
   add: (object)->
     position = object.position
@@ -148,9 +160,13 @@ TileMap.AStar = (startTile, endTile, cost)->
 
     neighbors = []
     neighbors.push(tile.top) if tile.top?
+    neighbors.push(tile.topLeft) if tile.topLeft?
     neighbors.push(tile.left) if tile.left?
+    neighbors.push(tile.bottomLeft) if tile.bottomLeft?
     neighbors.push(tile.bottom) if tile.bottom?
+    neighbors.push(tile.bottomRight) if tile.bottomRight?
     neighbors.push(tile.right) if tile.right?
+    neighbors.push(tile.topRight) if tile.topRight?
 
     for neighbor in neighbors
       neighborStatus = statuses[neighbor.id]
@@ -160,24 +176,29 @@ TileMap.AStar = (startTile, endTile, cost)->
           parent: tile
           opened: false
       if !neighborStatus.closed
-        coef = 1
-        moveCost = coef * cost(neighbor)
+        coef = if neighbor.position.x != tile.position.x && neighbor.position.y != tile.position.y then SQRT2 else 1
+        moveCost = cost(neighbor)
+        
+        if moveCost == false
+          neighborStatus.closed = true
+        else
+          moveCost *= coef
 
-        newCost = status.cost + moveCost
+          newCost = status.cost + moveCost
 
-        if !neighborStatus.opened || newCost < neighborStatus.cost
-          heuristicCost = neighbor.position.sub(neighbor.position).length()
-          predictedCost = newCost + heuristicCost
+          if !neighborStatus.opened || newCost < neighborStatus.cost
+            heuristicCost = neighbor.position.sub(neighbor.position).length()
+            predictedCost = newCost + heuristicCost
 
-          neighborStatus.cost = newCost
-          neighborStatus.heuristicCost = heuristicCost
-          neighborStatus.predictedCost = predictedCost
+            neighborStatus.cost = newCost
+            neighborStatus.heuristicCost = heuristicCost
+            neighborStatus.predictedCost = predictedCost
 
-          if !neighborStatus.opened
-            neighborStatus.opened = true
-          else
-            openList.remove(neighborStatus)
-          openList.insert(neighborStatus, predictedCost)
+            if !neighborStatus.opened
+              neighborStatus.opened = true
+            else
+              openList.remove(neighborStatus)
+            openList.insert(neighborStatus, predictedCost)
   return []
 
 module.exports = TileMap

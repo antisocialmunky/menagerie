@@ -19,12 +19,20 @@ describe 'TileMap', ->
       should.exist tile
       if tile.top?
         tile.top.bottom.should.equal tile
+      if tile.topLeft?
+        tile.topLeft.bottomRight.should.equal tile
       if tile.left?
         tile.left.right.should.equal tile
+      if tile.bottomLeft?
+        tile.bottomLeft.topRight.should.equal tile
       if tile.bottom?
         tile.bottom.top.should.equal tile
+      if tile.bottomRight?
+        tile.bottomRight.topLeft.should.equal tile
       if tile.right?
         tile.right.left.should.equal tile
+      if tile.topRight?
+        tile.topRight.bottomLeft.should.equal tile
     should.not.exist tileMap.map[-1]
     should.not.exist tileMap.map[tileMap.hashMax + 1]
 
@@ -101,7 +109,7 @@ describe 'TileMap', ->
     end = tileMap.get(100, 100)
 
     waypoints = TileMap.AStar(start, end, ()->return 1)
-    waypoints.length.should.equal 20
+    waypoints.length.should.equal 10
 
     waypoints[0].id.should.not.equal start.id
     waypoints[waypoints.length - 1].id.should.equal end.id
@@ -110,7 +118,7 @@ describe 'TileMap', ->
     end = tileMap.get(100, 200)
 
     waypoints = TileMap.AStar(start, end, ()->return 1)
-    waypoints.length.should.equal 30
+    waypoints.length.should.equal 20
 
     waypoints[0].id.should.not.equal start.id
     waypoints[waypoints.length - 1].id.should.equal end.id
