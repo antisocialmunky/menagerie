@@ -55,12 +55,14 @@ describe 'TileMap', ->
     a._tile.position.y.should.equal 10
     a._tile.center.x.should.equal 15
     a._tile.center.y.should.equal 15
+    a._tile.length.should.equal 1
     b._objectId.should.equal 1
     b._tile.should.equal tileMap.get(61, 9)
     b._tile.position.x.should.equal 60
     b._tile.position.y.should.equal 0
     b._tile.center.x.should.equal 65
     b._tile.center.y.should.equal 5
+    b._tile.length.should.equal 1
     a._tile.should.not.equal b._tile
 
     tileMap.filter(
@@ -76,8 +78,10 @@ describe 'TileMap', ->
     tileMap.remove(b).should.be.true
 
     a._objectId.should.equal 0
+    tileMap.get(a.position.x, a.position.y).length.should.equal 0
     should.not.exist a._tile
     b._objectId.should.equal 1
+    tileMap.get(b.position.x, b.position.y).length.should.equal 0
     should.not.exist b._tile
 
     should.not.exist tileMap.get(10, 10).objects[0]

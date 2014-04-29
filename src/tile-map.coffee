@@ -19,6 +19,7 @@ class Tile
   bottomRight: null
   right: null
   topRight: null
+  length: 0
   constructor: (options)->
     @id = options.id
     @position = options.position || @position
@@ -35,6 +36,7 @@ class Tile
       object._tile.remove(object)
     @objects[id] = object
     object._tile = @
+    @length++
   filter: (filter)->
     objects = []
     for id, object of @objects
@@ -43,7 +45,8 @@ class Tile
   remove: (object)->
     if object._objectId? && object._tile == @
       delete @objects[object._objectId]
-      delete object._tile
+      object._tile = null
+      @length--
 
 class TileMap
   pixelWidth: 0
@@ -57,7 +60,7 @@ class TileMap
   TileClass: Tile
   constructor: (options)->
     @pixelWidth = options.pixelWidth || @pixelWidth
-    @pixelHeight = options.pixelHeight || @pixelHeight
+    pixelHeight = @pixelHeight = options.pixelHeight || @pixelHeight
     @tileWidth = options.tileWidth || @tileWidth
     @tileHeight = options.tileHeight || @tileHeight
 
@@ -67,7 +70,7 @@ class TileMap
     @map = {}
     @hashMax = @tileHeight * @tileWidth - 1
     for x in [0...@totalPixelWidth-1] by @pixelWidth
-      for y in [0...@totalPixelHeight-1] by @pixelHeight
+      for y in [0...@totalPixelHeight-1] by pixelHeight
         hash = @hash(x, y)
         tile = @map[hash] = new @TileClass
           id: hash
@@ -78,7 +81,7 @@ class TileMap
         left = @get(x - 1, y)
         topLeft = @get(x - 1, y - 1)
         top = @get(x, y - 1)
-        bottomLeft = @get(x - 1, y + 1)
+        bottomLeft = @get(x - 1, y + pixelHeight)
         if left? 
           tile.left = left
           left.right = tile
