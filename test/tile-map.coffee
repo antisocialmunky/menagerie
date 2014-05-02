@@ -108,6 +108,12 @@ describe 'TileMap', ->
     tileMap.remove(a).should.be.false
     tileMap.remove(b).should.be.false
 
+describe 'TileMap.AStar', ->
+  tileMap = new TileMap(
+    pixelWidth: 10
+    pixelHeight: 10
+    tileWidth: 100
+    tileHeight: 100)
   it 'should be able to plot a path using A*', ->
     start = tileMap.get(0, 0)
     end = tileMap.get(100, 100)
@@ -126,3 +132,53 @@ describe 'TileMap', ->
 
     waypoints[0].id.should.not.equal start.id
     waypoints[waypoints.length - 1].id.should.equal end.id
+
+describe 'TileMap.PathingQueue', ->
+  tileMap = new TileMap(
+    pixelWidth: 10
+    pixelHeight: 10
+    tileWidth: 100
+    tileHeight: 100)
+
+  it 'should be able queue several objects and plot a path using A*', ->
+    pathingQueue = new TileMap.PathingQueue
+      algorithm: TileMap.AStar
+      cost: ()-> return 1
+
+    start = tileMap.get(0, 0)
+    object1 = 
+      tile: start
+    end1 = tileMap.get(100, 100)
+
+    pathingQueue.schedule(object1, end1, (waypoints) -> 
+      waypoints.length.should.equal 10
+      waypoints[0].id.should.not.equal start.id
+      waypoints[waypoints.length - 1].id.should.equal end1.id)
+    pathingQueue.queue.length.should.equal 1
+    pathingQueue.pathingMap[object1._pathingId].should.be.true
+    object1._pathingId.should.equal 0
+
+    object2 = 
+      tile: start
+    end2 = tileMap.get(100, 200)
+
+    pathingQueue.schedule(object2, end2, (waypoints) -> 
+      waypoints.length.should.equal 20
+      waypoints[0].id.should.not.equal start.id
+      waypoints[waypoints.length - 1].id.should.equal end2.id)
+    pathingQueue.queue.length.should.equal 2
+    pathingQueue.pathingMap[object2._pathingId].should.be.true
+    object2._pathingId.should.equal 1
+
+    pathingQueue.schedule(object2, end2, (waypoints) ->)
+    pathingQueue.queue.length.should.equal 2
+    pathingQueue.pathingMap[object2._pathingId].should.be.true
+    object2._pathingId.should.equal 1
+
+    pathingQueue.path()
+    pathingQueue.queue.length.should.equal 1
+    pathingQueue.pathingMap[object1._pathingId].should.be.false
+
+    pathingQueue.path()
+    pathingQueue.queue.length.should.equal 0
+    pathingQueue.pathingMap[object2._pathingId].should.be.false

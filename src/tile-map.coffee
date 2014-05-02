@@ -204,4 +204,30 @@ TileMap.AStar = (startTile, endTile, cost)->
             openList.insert(neighborStatus, predictedCost)
   return []
 
+pathingId = 0
+class TileMap.PathingQueue
+  queue: null
+  pathingMap: null
+  algorithm: null
+  constructor: (options)->
+    @queue = []
+    @pathingMap = {}
+    @algorithm = options.algorithm
+    @cost = options.cost
+  schedule: (object, end, callback)->
+    id = object._pathingId
+    if !id?
+      id = object._pathingId = pathingId++
+    if !@pathingMap[id]
+      context = [object, end, callback]
+      @queue.push(context)
+      @pathingMap[id] = true
+  path: ()->
+    if @queue.length > 0
+      [object, end, callback] = @queue.shift()
+      start = object.tile
+      if start?
+        @pathingMap[object._pathingId] = false
+        callback(@algorithm(start, end, @cost))
+
 module.exports = TileMap
