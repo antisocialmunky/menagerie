@@ -17,9 +17,10 @@ class Heap
     if @length > 0
       shift = @nodes.shift()
       @length--
+      node = @nodes
       idIndexMap = @idIndexMap
-      for id, index of idIndexMap
-        idIndexMap[id]--
+      for i, node of @nodes
+        idIndexMap[node.content._heapId] = i
       sift = 0
       while sift?
         sift = @siftDown(sift)
