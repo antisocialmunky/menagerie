@@ -182,3 +182,6 @@ describe 'TileMap.PathingQueue', ->
     pathingQueue.path()
     pathingQueue.queue.length.should.equal 0
     pathingQueue.pathingMap[object2._pathingId].should.be.false
+    
+    pathingQueue.path()
+    pathingQueue.queue.length.should.equal 0

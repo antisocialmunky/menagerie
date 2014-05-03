@@ -1,5 +1,5 @@
 Vector2D = require './vector2d'
-PriorityQueue = require 'binaryheap'
+Heap = require './heap'
 
 FLOOR = Math.floor
 SQRT2 = Math.sqrt(2)
@@ -146,7 +146,7 @@ TileMap.AStar = (startTile, endTile, cost)->
     predictedCost: 0
     opened: true
 
-  openList = new PriorityQueue(true)
+  openList = new Heap
   openList.insert(startStatus, 0)
 
   while openList.length > 0
@@ -199,9 +199,9 @@ TileMap.AStar = (startTile, endTile, cost)->
 
             if !neighborStatus.opened
               neighborStatus.opened = true
+              openList.insert(neighborStatus, predictedCost)
             else
-              openList.remove(neighborStatus)
-            openList.insert(neighborStatus, predictedCost)
+              openList.update(neighborStatus, predictedCost)
   return []
 
 pathingId = 0
