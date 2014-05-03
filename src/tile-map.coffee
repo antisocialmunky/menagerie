@@ -206,10 +206,10 @@ TileMap.AStar = (startTile, endTile, cost)->
           newCost = status.cost + moveCost
 
           if !neighborStatus.opened || newCost < neighborStatus.cost
-            neighborStatus.parent = tile
             heuristicCost = neighbor.position.sub(neighbor.position).length()
             predictedCost = newCost + heuristicCost
 
+            neighborStatus.parent = tile
             neighborStatus.cost = newCost
             neighborStatus.heuristicCost = heuristicCost
             neighborStatus.predictedCost = predictedCost
