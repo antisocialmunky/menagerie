@@ -1,16 +1,12 @@
 FLOOR = Math.floor
 
-heapId = 0
-
 class Heap
-  idIndexMap: null
   nodes: null
   length: 0
   constructor: (options)->
     if !options?
       options = {}
     @nodes = options.nodes || []
-    @idIndexMap = {}
     @heapify()
 
   pop: ()->
@@ -18,9 +14,6 @@ class Heap
       shift = @nodes.shift()
       @length--
       node = @nodes
-      idIndexMap = @idIndexMap
-      for i, node of @nodes
-        idIndexMap[node.content._heapId] = i
       sift = 0
       while sift?
         sift = @siftDown(sift)
@@ -28,26 +21,22 @@ class Heap
     return null
 
   insert: (content, value)->
-    if content? && !content._heapId?
-      content._heapId = heapId
+    if content
       length = @length++
       nodes = @nodes
       nodes[length] = 
         content: content
         value: value
-      @idIndexMap[heapId] = length
       @bubbleUp(length)
-      heapId++
 
   update: (content, value)->
-    idIndexMap = @idIndexMap
-    if content? && content._heapId? && idIndexMap[content._heapId]?
+    if content?
       nodes = @nodes
+      for i, node of nodes
+        if content == node.content
+          break
 
-      i = idIndexMap[content._heapId]
-      swap = nodes[i]
-      idIndexMap[nodes[0].content._heapId] = i
-      idIndexMap[nodes[i].content._heapId] = 0
+      swap = node
       nodes[i] = nodes[0]
       nodes[0] = swap
       swap.value = value
@@ -57,7 +46,6 @@ class Heap
         sift = @siftDown(sift)
 
   bubbleUp: (i)->
-    idIndexMap = @idIndexMap
     nodes = @nodes
 
     last = i
@@ -66,15 +54,11 @@ class Heap
       parent = FLOOR(parent/2)
       if nodes[parent].value > nodes[last].value
         swap = nodes[parent]
-        idIndexMap[nodes[parent].content._heapId] = last
-        idIndexMap[nodes[last].content._heapId] = parent
         nodes[parent] = nodes[last]
         nodes[last] = swap
       last = parent
 
   siftDown: (i)->
-    idIndexMap = @idIndexMap
-
     i2 = i * 2
 
     nodes = @nodes
@@ -86,14 +70,10 @@ class Heap
       if nodes[right]?
         lesser = if nodes[left].value > nodes[right].value then right else left
         if node.value > nodes[lesser].value
-          idIndexMap[nodes[i].content._heapId] = lesser
-          idIndexMap[nodes[lesser].content._heapId] = i
           nodes[i] = nodes[lesser]
           nodes[lesser] = node
           return lesser
       else if node.value > nodes[left].value
-        idIndexMap[nodes[i].content._heapId] = left
-        idIndexMap[nodes[left].content._heapId] = i
         nodes[i] = nodes[left]
         nodes[left] = node
         return left

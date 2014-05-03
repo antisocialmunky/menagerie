@@ -4,7 +4,6 @@ should = require('chai').should()
 describe 'Heap', ->
   it 'should construct correctly', ->
     heap = new Heap()
-    heap.idIndexMap.should.exist
     heap.nodes.length.should.equal 0
     heap.length.should.equal 0
 
