@@ -132,18 +132,43 @@ class TileMap
       return false 
     return hash
 
+Directions =
+  Left: 0
+  BottomLeft: 1
+  Bottom: 2
+  BottomRight: 3
+  Right: 4
+  TopRight: 5
+  Top: 6
+  TopLeft: 7
+  All: 8
+
+getNeighbors = (status)->
+  tile = status.tile
+  neighbors = []
+
+  neighbors.push(tile.top) if tile.top?
+  neighbors.push(tile.topLeft) if tile.topLeft?
+  neighbors.push(tile.left) if tile.left?
+  neighbors.push(tile.bottomLeft) if tile.bottomLeft?
+  neighbors.push(tile.bottom) if tile.bottom?
+  neighbors.push(tile.bottomRight) if tile.bottomRight?
+  neighbors.push(tile.right) if tile.right?
+  neighbors.push(tile.topRight) if tile.topRight?
+
+  return neighbors
+
 TileMap.AStar = (startTile, endTile, cost)-> 
   statuses = {}
 
-  lastTile = null
-
   startStatus = statuses[startTile.id] = 
     tile: startTile
-    parent: lastTile
+    parent: null
     closed: false
     cost: 0
     heuristicCost: 0
     predictedCost: 0
+    direction: Directions.All
     opened: true
 
   openList = new Heap
@@ -161,22 +186,13 @@ TileMap.AStar = (startTile, endTile, cost)->
         tile = statuses[tile.id].parent
       return waypoints.reverse()
 
-    neighbors = []
-    neighbors.push(tile.top) if tile.top?
-    neighbors.push(tile.topLeft) if tile.topLeft?
-    neighbors.push(tile.left) if tile.left?
-    neighbors.push(tile.bottomLeft) if tile.bottomLeft?
-    neighbors.push(tile.bottom) if tile.bottom?
-    neighbors.push(tile.bottomRight) if tile.bottomRight?
-    neighbors.push(tile.right) if tile.right?
-    neighbors.push(tile.topRight) if tile.topRight?
+    neighbors = getNeighbors(status)
 
     for neighbor in neighbors
       neighborStatus = statuses[neighbor.id]
       if !neighborStatus? 
         neighborStatus = statuses[neighbor.id] = 
           tile: neighbor
-          parent: tile
           opened: false
       if !neighborStatus.closed
         coef = if neighbor.position.x != tile.position.x && neighbor.position.y != tile.position.y then SQRT2 else 1
@@ -190,6 +206,7 @@ TileMap.AStar = (startTile, endTile, cost)->
           newCost = status.cost + moveCost
 
           if !neighborStatus.opened || newCost < neighborStatus.cost
+            neighborStatus.parent = tile
             heuristicCost = neighbor.position.sub(neighbor.position).length()
             predictedCost = newCost + heuristicCost
 
