@@ -1,6 +1,7 @@
 Vector2D = require './vector2d'
 Heap = require './heap'
 
+ABS = Math.abs
 FLOOR = Math.floor
 SQRT2 = Math.sqrt(2)
 
@@ -9,6 +10,7 @@ class Tile
   id: 0
   objects: null
   position: new Vector2D
+  coords: new Vector2D
   center: null
   map: null
   top: null
@@ -23,10 +25,11 @@ class Tile
   constructor: (options)->
     @id = options.id
     @position = options.position || @position
-    @map = options.map
+    map = @map = options.map
     @center = new Vector2D
-      x: @position.x + @map.pixelWidth / 2
-      y: @position.y + @map.pixelHeight / 2
+      x: @position.x + map.pixelWidth / 2
+      y: @position.y + map.pixelHeight / 2
+    @coords = @center.divideByScalar((map.pixelWidth + map.pixelHeight) / 2)
     @objects = {}
   add: (object)->
     id = object._objectId
@@ -182,15 +185,15 @@ TileMap.AStar = (startTile, endTile, cost)->
     if tile == endTile
       waypoints = []
       while tile != startTile
-        waypoints.push(tile)
+        waypoints.unshift(tile)
         tile = statuses[tile.id].parent
-      return waypoints.reverse()
+      return waypoints
 
     neighbors = getNeighbors(status)
 
     for neighbor in neighbors
       neighborStatus = statuses[neighbor.id]
-      if !neighborStatus? 
+      if !neighborStatus?
         neighborStatus = statuses[neighbor.id] = 
           tile: neighbor
           opened: false
@@ -204,11 +207,11 @@ TileMap.AStar = (startTile, endTile, cost)->
           moveCost *= coef
 
           newCost = status.cost + moveCost
+          heuristicVector = neighbor.coords.sub(endTile.coords)
+          heuristicCost = ABS(heuristicVector.x) + ABS(heuristicVector.y)
+          predictedCost = newCost + heuristicCost
 
-          if !neighborStatus.opened || newCost < neighborStatus.cost
-            heuristicCost = neighbor.position.sub(neighbor.position).length()
-            predictedCost = newCost + heuristicCost
-
+          if !neighborStatus.opened || predictedCost < neighborStatus.predictedCost
             neighborStatus.parent = tile
             neighborStatus.cost = newCost
             neighborStatus.heuristicCost = heuristicCost

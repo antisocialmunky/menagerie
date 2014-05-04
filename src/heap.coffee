@@ -13,7 +13,6 @@ class Heap
     if @length > 0
       shift = @nodes.shift()
       @length--
-      node = @nodes
       sift = 0
       while sift?
         sift = @siftDown(sift)
