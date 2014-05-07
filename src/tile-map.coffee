@@ -9,6 +9,8 @@ objectId = 0
 class Tile
   id: 0
   objects: null
+  bins: null
+  objectFilterMap: null
   position: new Vector2D
   coords: new Vector2D
   center: null
@@ -31,7 +33,10 @@ class Tile
       y: @position.y + map.pixelHeight / 2
     @coords = @center.divideByScalar((map.pixelWidth + map.pixelHeight) / 2)
     @objects = {}
-  add: (object)->
+    @bins = {}
+    @objectFilterMap = {}
+
+  add: (object, bins)->
     id = object._objectId
     if !id?
       id = object._objectId = objectId++
@@ -40,16 +45,34 @@ class Tile
     @objects[id] = object
     object._tile = @
     @length++
+
+    if bins?
+      @objectFilterMap[id] = bins
+      if bins instanceof Array
+        for bin in bins
+          @bins[bin] = (@bins[bin] + 1) || 1
+      else
+        @bins[bins] = (@bins[bins] + 1) || 1
+
   filter: (filter)->
     objects = []
     for id, object of @objects
       objects.push(object) if filter(object)
     return objects
+
   remove: (object)->
     if object._objectId? && object._tile == @
-      delete @objects[object._objectId]
+      id = object._objectId
+      delete @objects[id]
       object._tile = null
       @length--
+
+      bins = @objectFilterMap[id]
+      if bins instanceof Array
+        for bin in bins
+          @bins[bin]--
+      else
+        @bins[bins]--
 
 class TileMap
   pixelWidth: 0
@@ -98,13 +121,13 @@ class TileMap
           tile.bottomLeft = bottomLeft
           bottomLeft.topRight = tile
 
-  add: (object)->
+  add: (object, bins)->
     position = object.position
     if position?
       if @bounds(position.x, position.y)
         hash = @hash(position.x, position.y)
         tile = @map[hash]
-        tile.add(object)
+        tile.add(object, bins)
         return true
     return false
 

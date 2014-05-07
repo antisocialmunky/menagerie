@@ -87,6 +87,36 @@ describe 'TileMap', ->
     should.not.exist tileMap.get(10, 10).objects[0]
     should.not.exist tileMap.get(61, 9).objects[1]
 
+  it 'should add/get with bins correctly', ->
+    a =
+      position:
+        x: 10
+        y: 10
+    b =
+      position:
+        x: 10
+        y: 10
+    
+    tileMap.add(a, 'a').should.be.true
+    tileMap.add(b, ['a', 'b']).should.be.true
+
+    tile = tileMap.get(10, 10)
+
+    a._tile.should.equal tile
+    b._tile.should.equal tile
+    tile.length.should.equal 2
+
+    tile.bins.a.should.equal 2
+    tile.bins.b.should.equal 1
+    
+    tileMap.remove(a).should.be.true
+    tile.bins.a.should.equal 1
+    tile.bins.b.should.equal 1
+
+    tileMap.remove(b).should.be.true
+    tile.bins.a.should.equal 0
+    tile.bins.b.should.equal 0
+
   it 'should not add out of bounds', ->
     a =
       position:
