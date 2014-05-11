@@ -4,10 +4,11 @@ class Heap
   nodes: null
   length: 0
   constructor: (options)->
-    if !options?
-      options = {}
-    @nodes = options.nodes || []
-    @heapify()
+    #if !options?
+      #options = {}
+    #@nodes = options.nodes || []
+    #@heapify()
+    @nodes = []
 
   pop: ()->
     if @length > 0
@@ -23,21 +24,23 @@ class Heap
     if content
       length = @length++
       nodes = @nodes
-      nodes[length] = 
+      #objects can onyl be part of one heap at a time, bad things happen otherwise
+      content._heapNode = nodes[length] = 
         content: content
         value: value
+        index: length
       @bubbleUp(length)
 
   update: (content, value)->
-    if content?
+    if content? && content._heapNode?
       nodes = @nodes
-      for i, node of nodes
-        if content == node.content
-          break
+      swap = content._heapNode
 
-      swap = node
+      i = swap.index
       nodes[i] = nodes[0]
+      nodes[i].index = i
       nodes[0] = swap
+      nodes[0].index = 0
       swap.value = value
 
       sift = 0
@@ -54,7 +57,9 @@ class Heap
       if nodes[parent].value > nodes[last].value
         swap = nodes[parent]
         nodes[parent] = nodes[last]
+        nodes[parent].index = parent
         nodes[last] = swap
+        nodes[last].index = last
       last = parent
 
   siftDown: (i)->
@@ -70,16 +75,20 @@ class Heap
         lesser = if nodes[left].value > nodes[right].value then right else left
         if node.value > nodes[lesser].value
           nodes[i] = nodes[lesser]
+          nodes[i].index = i
           nodes[lesser] = node
+          nodes[lesser].index = lesser
           return lesser
       else if node.value > nodes[left].value
         nodes[i] = nodes[left]
+        nodes[i].index = i
         nodes[left] = node
+        nodes[left].index = left
         return left
     return null
 
-  heapify: ()->
-    for i in [0..@nodes.length-1]
-      @siftDown(i)
+#  heapify: ()->
+#    for i in [0..@nodes.length-1]
+#      @siftDown(i)
 
 module.exports = Heap
